@@ -1,0 +1,66 @@
+﻿@page "/login"
+@using LoginAndRegistration.Models
+@using LoginAndRegistration.Database
+@using LoginAndRegistration.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <div class="form-group mt-2">
+        <label for="email">Email:</label>
+        <InputText id="email" @bind-Value="loginModel.UserEmail" class="form-control" placeholder="Enter email" />
+        <ValidationMessage For="@(() => loginModel.UserEmail)" />
+    </div>
+    <div class="form-group mt-2">
+        <label for="password">Password:</label>
+        <InputText id="password" @bind-Value="loginModel.Password" type="password" class="form-control" placeholder="Enter password" />
+        <ValidationMessage For="@(() => loginModel.Password)" />
+    </div>
+
+    <div class="mt-2 text-end">
+        <NavLink href="registration" class="nav-link">
+            Don't have an account? Sign up
+        </NavLink>
+    </div>
+
+    <div class="d-grid gap-2 col-6 mx-auto text-center mt-2">
+        <button type="submit" class="btn btn-primary">Sign In</button>
+    </div>
+</EditForm>
+
+@code {
+    private LoginModel loginModel = new LoginModel(); // Instantiate a LoginModel object to store login information
+    private UsersDatabase usersDatabase = new UsersDatabase(); // Instantiate a UsersDatabase object to interact with user data
+
+    // Method to handle the login process
+    private async Task HandleLogin()
+    {
+        // Authenticate user using the provided login credentials
+        var isAuthenticated = await usersDatabase.AuthenticateUsers(loginModel.UserEmail, loginModel.Password);
+
+        // If authentication is successful
+        if (isAuthenticated)
+        {
+            // Check if the AuthenticationStateProvider is a CustomAuthenticationStateProvider
+            if (AuthenticationStateProvider is CustomAuthenticationStateProvider customAuthProvider)
+            {
+                // Mark the user as authenticated using the CustomAuthenticationStateProvider
+                await customAuthProvider.MarkUserAsAuthenticated(loginModel.UserEmail);
+
+                // Navigate to the home page
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+        }
+        // If authentication fails
+        else
+        {
+            // Display an alert indicating login failure
+            await App.Current.MainPage.DisplayAlert("Login Failed", "Invalid email or password. Please try again.", "OK");
+        }
+    }
+}
+

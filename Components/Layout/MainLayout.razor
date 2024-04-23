@@ -1,0 +1,63 @@
+﻿@inherits LayoutComponentBase
+@using LoginAndRegistration.Services
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<CascadingAuthenticationState>
+    <div class="main-layout">
+        <header class="top-menu bg-light text-white">
+            <div class="branding">
+                <a href="/" class="text-primary">jam oop</a>
+            </div>
+            <nav class="nav-links">
+                <a href="/" class="btn btn-light text-dark @(IsActive("/") ? "active" : "")">About me</a>
+                <a href="/projects" class="btn btn-light text-dark @(IsActive("/projects") ? "active" : "")">My projects</a>
+                <a href="/blog" class="btn btn-light text-dark @(IsActive("/blog") ? "active" : "")">Blog</a>
+                <a href="/coffee-chat" class="btn btn-light text-dark @(IsActive("/coffee-chat") ? "active" : "")">Coffee chat</a>
+            </nav>
+            <div class="auth-links">
+                @if (!isAuthenticated)
+                {
+                    <a href="/login" class="btn btn-btn-light">Log in</a>
+                    <a href="/registration" class="btn btn-light">Sign up</a>
+                }
+                else
+                {
+                    <button @onclick="Logout" class="btn btn-light">Logout (@username)</button>
+                }
+            </div>
+        </header>
+        <main>
+            <article class="content">
+                @Body
+            </article>
+        </main>
+    </div>
+</CascadingAuthenticationState>
+
+@code {
+    private bool isAuthenticated = false; // Flag indicating whether user is authenticated
+    private string username = "Guest"; // Username, default to "Guest"
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isAuthenticated = authState.User.Identity.IsAuthenticated; // Update isAuthenticated based on authentication state
+        username = isAuthenticated ? authState.User.Identity.Name : "Guest"; // Update username if authenticated
+    }
+
+    private async Task Logout()
+    {
+        // Logout method
+        if (AuthenticationStateProvider is CustomAuthenticationStateProvider customProvider)
+        {
+            await customProvider.MarkUserAsLoggedOut(); // Mark user as logged out
+            NavigationManager.NavigateTo("/login", forceLoad: true); // Navigate to login page
+        }
+    }
+
+    private bool IsActive(string route)
+    {
+        return NavigationManager.Uri.EndsWith(route); // Check if current page's URI ends with the specified route
+    }
+}

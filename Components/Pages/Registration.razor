@@ -1,0 +1,115 @@
+﻿@page "/registration"
+@using LoginAndRegistration.Models
+@using LoginAndRegistration.Database
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<h3>Registration</h3>
+
+<EditForm Model="@registrationModel" OnValidSubmit="Submit" class="row g-3">
+    <DataAnnotationsValidator />
+    <div class="col-md-6">
+        <label for="inputEmail4" class="form-label">Email</label>
+        <InputText @bind-Value="registrationModel.userEmail" class="form-control" id="inputEmail4" />
+        <ValidationMessage For="@(() => registrationModel.userEmail)" />
+    </div>
+    <div class="col-md-6">
+        <label for="inputPassword4" class="form-label">Password</label>
+        <InputText @bind-Value="registrationModel.Password" type="password" class="form-control" id="inputPassword4" />
+        <ValidationMessage For="@(() => registrationModel.Password)" />
+    </div>
+    <div class="col-md-6">
+        <label for="inputConfirmPassword4" class="form-label">Confirm Password</label>
+        <InputText @bind-Value="registrationModel.confirmPassword" type="password" class="form-control" id="inputConfirmPassword4" />
+        <ValidationMessage For="@(() => registrationModel.confirmPassword)" />
+    </div>
+    <div class="col-12">
+        <label for="inputAddress" class="form-label">Address</label>
+        <InputText @bind-Value="registrationModel.address1" class="form-control" id="inputAddress" placeholder="1234 Main St" />
+        <ValidationMessage For="@(() => registrationModel.address1)" />
+    </div>
+    <div class="col-12">
+        <label for="inputAddress2" class="form-label">Address 2</label>
+        <InputText @bind-Value="registrationModel.address2" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor" />
+        <ValidationMessage For="@(() => registrationModel.address2)" />
+    </div>
+    <div class="col-md-6">
+        <label for="inputCity" class="form-label">City</label>
+        <InputText @bind-Value="registrationModel.city" class="form-control" id="inputCity" />
+        <ValidationMessage For="@(() => registrationModel.city)" />
+    </div>
+    <div class="col-md-4">
+        <label for="inputState" class="form-label">State</label>
+        <InputSelect @bind-Value="registrationModel.State" class="form-select" id="inputState">
+            <option value="">Choose...</option>
+            <option value="Alberta">Alberta</option>
+            <option value="British Columbia">British Columbia</option>
+            <option value="Manitoba">Manitoba</option>
+            <option value="New Brunswick">New Brunswick</option>
+            <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+            <option value="Northwest Territories">Northwest Territories</option>
+            <option value="Nova Scotia">Nova Scotia</option>
+            <option value="Nunavut">Nunavut</option>
+            <option value="Ontario">Ontario</option>
+            <option value="Prince Edward Island">Prince Edward Island</option>
+            <option value="Quebec">Quebec</option>
+            <option value="Saskatchewan">Saskatchewan</option>
+            <option value="Yukon">Yukon</option>
+            <!-- Add other states as necessary -->
+        </InputSelect>
+        <ValidationMessage For="@(() => registrationModel.State)" />
+    </div>
+    <div class="col-md-2">
+        <label for="inputZip" class="form-label">Zip</label>
+        <InputText @bind-Value="registrationModel.postalCode" class="form-control" id="inputZip" />
+        <ValidationMessage For="@(() => registrationModel.postalCode)" />
+    </div>
+
+    <div class="mt-2 text-end">
+        <NavLink class="nav-link" href="/login">
+            <span>Already Have an Account?</span>
+        </NavLink>
+    </div>
+
+    <div class="text-center mt-2 d-grid gap-2 col-6 mx-auto">
+        <button type="submit" class="btn btn-outline-dark">Sign Up</button>
+    </div>
+</EditForm>
+
+@code {
+    RegistrationModel registrationModel = new RegistrationModel(); // Instantiate a RegistrationModel object to store registration information
+
+    // Method to handle the registration submission
+    private async Task Submit()
+    {
+        var usersDatabase = new UsersDatabase(); // Instantiate a UsersDatabase object to interact with user data
+
+        // Attempt to create a new user in the database with the provided registration information
+        bool isUserCreated = await usersDatabase.CreateUser(
+            registrationModel.userEmail,
+            registrationModel.Password,
+            registrationModel.address1,
+            registrationModel.address2,
+            registrationModel.city,
+            registrationModel.State,
+            registrationModel.postalCode
+        );
+
+        // If user creation is successful
+        if (isUserCreated)
+        {
+            // Display a success message using JavaScript alert
+            await JSRuntime.InvokeVoidAsync("alert", "User Registered Successfully.");
+
+            // Navigate to the login page
+            NavigationManager.NavigateTo("/login");
+        }
+        // If user creation fails (due to duplicate email)
+        else
+        {
+            // Display an alert indicating duplicate email
+            await JSRuntime.InvokeVoidAsync("alert", "There is duplicity in the email. Please try again.");
+        }
+    }
+}
+

@@ -1,0 +1,55 @@
+﻿@page "/projects"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject NavigationManager NavigationManager
+
+<section id="about" class="full-height px-lg-5">
+    <div class="container">
+        <div class="row pb-4" data-aos="fade-up">
+            <div class="col-lg-8">
+                <h6 class="text-brand">ABOUT</h6>
+                <h1>My Education & Experience</h1>
+            </div>
+        </div>
+
+        <div class="row gy-5">
+            <!-- Education Section -->
+            <div class="col-lg-6">
+                <h3 class="mb-4" data-aos="fade-up" data-aos-delay="300">Education</h3>
+                @for (int i = 0; i < 3; i++)
+                {
+                    <div class="col-12" data-aos="fade-up" data-aos-delay="@(600 + i * 100)">
+                        <div class="bg-base p-4 rounded-4 shadow-effect" @onclick="() => NavigateToDetails(i)">
+                            <h4>Master of Software Engineering</h4>
+                            <p class="text-brand mb-2">De Mars University Venston Bay (2015 - 2020)</p>
+                            <p class="mb-0">Focused on advanced software development techniques and project management.</p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Experience Section -->
+            <div class="col-lg-6">
+                <h3 class="mb-4" data-aos="fade-up" data-aos-delay="300">Experience</h3>
+                @for (int i = 0; i < 3; i++)
+                {
+                    <div class="col-12" data-aos="fade-up" data-aos-delay="@(600 + i * 100)">
+                        <div class="bg-base p-4 rounded-4 shadow-effect" @onclick="() => NavigateToDetails(i + 3)">
+                            <h4>Applications Developer</h4>
+                            <p class="text-brand mb-2">Twitter (2018 - 2020)</p>
+                            <p class="mb-0">Developed multiple high-profile applications focused on improving user engagement.</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private void NavigateToDetails(int index)
+    {
+        // This will navigate the user to a detailed view based on the index provided.
+        NavigationManager.NavigateTo($"/details/{index}");
+    }
+}

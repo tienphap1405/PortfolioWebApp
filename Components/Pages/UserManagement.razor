@@ -1,0 +1,70 @@
+﻿@page "/User Management"
+@using LoginAndRegistration.Database
+@inject UsersDatabase userDatabase 
+<h3>User Management</h3>
+@if (errorOccurred)
+{
+    <p style="color:red;">An error occurred: @errorMessage</p>
+    <p>Please try reloading the page.</p>
+}
+else if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Address 1</th>
+                <th>Address 2</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Postal Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (User user in userslist)
+            {
+                <tr>
+                    <td>@user.UserId</td>
+                    <td>@user.UserEmail</td>
+                    <td>@user.Address1</td>
+                    <td>@user.Address2</td>
+                    <td>@user.City</td>
+                    <td>@user.State</td>
+                    <td>@user.PostalCode</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+@code {
+    private List<User>? userslist;
+    private bool errorOccurred = false;
+    private string errorMessage;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            userslist = await userDatabase.GetUsers();
+
+        }
+        catch (Exception ex)
+        {
+            errorOccurred = true;
+            errorMessage = ex.Message;
+            Console.WriteLine($"Error fetching users: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

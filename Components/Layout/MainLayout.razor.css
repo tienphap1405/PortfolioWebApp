@@ -1,0 +1,87 @@
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.branding {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-menu a {
+    color: #333; 
+    margin-right: 1rem;
+    text-decoration: none;
+}
+
+.auth-buttons a {
+    color: #333; 
+    margin-left: 1rem;
+    text-decoration: none;
+}
+
+.btn-login,
+.btn-signup {
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.btn-login {
+    background-color: #4CAF50; 
+
+.btn-signup {
+    background-color: #008CBA; 
+}
+
+main {
+    padding: 1rem;
+    flex-grow: 1;
+}
+
+.button-link {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 5px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px; 
+    transition: background-color 0.3s, color 0.3s; 
+    cursor: pointer; 
+}
+
+.button-link-login {
+    background-color: #4CAF50; 
+    color: white; 
+    border: 1px solid #4CAF50; 
+}
+
+    .button-link-login:hover {
+        background-color: #45a049;
+    }
+
+
+.button-link-register {
+    background-color: #008CBA; 
+    color: white; 
+    border: 1px solid #008CBA; 
+}
+
+    .button-link-register:hover {
+        background-color: #007ba7; 
+    }
+
+.btn:hover {
+    
+    background-color: mediumblue; 
+    color: white; 
+}
